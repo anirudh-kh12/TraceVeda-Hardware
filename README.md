@@ -5,7 +5,7 @@ Hardware-focused documentation and ESP32 firmware for **TraceVeda**, a collabora
 This repository presents the hardware and embedded-firmware work contributed to the wider team project. It is not a claim of sole authorship of the complete TraceVeda platform.
 
 **Individual contribution:** Hardware development and IoT integration  
-**Original team repository:** [TraceVeda](https://github.com/vishnusharma131313-stack/TRACEVEDA)
+**Original team repository:** [TraceVeda](https://github.com/vishnusharma131313-stack/TRACEVEDA)\
 **Live Website:** [TraceVeda Website](https://traceveda.vercel.app)
 
 ## Project overview

@@ -1,0 +1,19 @@
+# Local credentials/configuration
+secrets.h
+config.local.h
+.env
+*.local
+
+# Build outputs
+build/
+.cache/
+*.o
+*.elf
+*.bin
+*.map
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

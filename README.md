@@ -6,6 +6,7 @@ This repository presents the hardware and embedded-firmware work contributed to 
 
 **Individual contribution:** Hardware development and IoT integration  
 **Original team repository:** https://github.com/vishnusharma131313-stack/TRACEVEDA
+**Website:** https://traceveda.vercel.app/
 
 ## Project overview
 

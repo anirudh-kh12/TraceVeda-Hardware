@@ -4,7 +4,7 @@ config.local.h
 .env
 *.local
 
-# Build outputs
+# Arduino / build outputs
 build/
 .cache/
 *.o

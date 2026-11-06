@@ -1,54 +1,51 @@
-# Component Reference
+# Hardware Components
 
-This reference describes the components present in the supplied firmware. Exact module variants and board-level electrical details must be checked against the physical parts used in the prototype.
+This document describes the modules used in the final firmware and the role of each component. Exact breakout-board revisions and all electrical specifications were not retained in the project archive.
 
-| Component | Node(s) | Firmware interface | Role |
-|---|---|---|---|
-| ESP32 development board | Both | GPIO, I²C, UART, Wi-Fi | Main controller; reads sensors and communicates with backend |
-| DHT22 | Both | Single-wire digital data | Measures temperature and relative humidity |
-| BH1750 | Both | I²C | Measures ambient illuminance in lux |
-| I²C character LCD | Storage 20×4; Truck 16×2 | I²C | Local display of readings and device status |
-| Limit switch | Both | Digital input with `INPUT_PULLUP` | Detects door/compartment switch state |
-| Red LED | Both | Digital output | Indicates backend-directed alert state |
-| GPS receiver | Truck | UART2 / serial | Provides latitude, longitude and fix-related information |
-| Load cell | Truck | Through HX711 | Converts mechanical load into a small electrical signal |
-| HX711 module | Truck | DT + SCK digital interface | Amplifies and digitizes the load-cell bridge signal |
-| LittleFS | Both | ESP32 flash filesystem | Stores queued telemetry when network/backend upload is unavailable |
+| Component | Node | Purpose / interface |
+|---|---|---|
+| ESP32 development board | Both | Main microcontroller; Wi-Fi, GPIO, I²C and UART |
+| DHT22 | Both | Temperature and relative-humidity measurement; digital data |
+| BH1750 | Both | Ambient illuminance measurement; I²C |
+| I²C character LCD | Storage 20×4; Truck 16×2 | Local display |
+| Limit switch | Both | Door/compartment state; digital input |
+| Red LED | Both | Backend-directed visual alert output |
+| NEO-6M GPS | Truck | Position data over UART |
+| 20 kg load cell | Truck | Converts applied load into a small bridge signal |
+| HX711 module | Truck | Amplifies and digitizes the load-cell signal |
 
-## Component notes
+## ESP32 development board
 
-### DHT22
+The ESP32 development modules acted as the controller for each node. They read sensors, update the local LCD, communicate with the backend over Wi-Fi and process backend responses. The boards were powered through USB during the prototype work.
 
-A capacitive humidity element and thermistor are used to report relative humidity and temperature. The supplied integrated firmware configures the data pin as GPIO 4 and declares `DHT22`. Allow the sensor's specified sampling interval; the Truck Node schedules DHT reads every 2 seconds.
+## DHT22
 
-### BH1750
+The DHT22 measures temperature and relative humidity. In the final firmware its data pin is GPIO 4 on both nodes.
 
-A digital ambient-light sensor communicating over I²C. The integrated sketches initialize it in continuous high-resolution mode. The I²C bus uses GPIO 21 (SDA) and GPIO 22 (SCL).
+## BH1750
 
-### Character LCD with I²C backpack
+The BH1750 measures ambient illuminance in lux and communicates over I²C. The final firmware uses GPIO 21 for SDA and GPIO 22 for SCL.
 
-The integrated Storage Node configures a 20-column, 4-row display. The integrated Truck Node configures a 16-column, 2-row display. Both use I²C address `0x27` in the supplied code. I²C address and voltage compatibility must be verified for the actual backpack.
+## Character LCD
 
-### Limit switch
+The Storage Node uses a 20×4 I²C LCD. The Truck Node uses a 16×2 I²C LCD. The final firmware declares I²C address `0x27` for both. The user confirmed that the LCD modules used 5 V in the prototype; the exact backpack pull-up arrangement is not recorded.
 
-The sketches configure the input with `INPUT_PULLUP`. This means the expected wiring is typically a switch between the GPIO input and ground, but confirm the exact switch contacts and intended active state on the prototype before reproducing the circuit. The firmware variable represents a door-closed state; verify the mechanical mounting and contact selection.
+## Limit switch
 
-### GPS receiver
+The limit switch provides a digital input representing door/compartment state. Both final sketches configure GPIO 27 with `INPUT_PULLUP`. The exact NO/NC terminal selection is not currently known.
 
-The Truck Node uses ESP32 UART2 with RX GPIO 16 and TX GPIO 17. TinyGPSPlus parses the serial stream. A valid fix may not be available indoors; test outdoors with an appropriate antenna.
+## NEO-6M GPS
 
-### Load cell and HX711
+The Truck Node uses a NEO-6M GPS receiver. GPS serial communication is configured on ESP32 UART2 using GPIO 16 as RX and GPIO 17 as TX.
 
-The HX711 connects to GPIO 32 (DT) and GPIO 33 (SCK). The firmware calibration factor is `126.4576`, with comments indicating the returned value is treated as grams before conversion to kilograms. Calibration is specific to the load cell, mechanical mounting, excitation voltage, and library convention. Validate using known reference masses and document the calibration method.
+## Load cell and HX711
 
-### Red LED
+The Truck Node uses a 20 kg load cell with an HX711 amplifier. The final firmware connects HX711 DT to GPIO 32 and SCK to GPIO 33. The calibration constant in the final firmware is `126.4576`; its final accuracy has not been independently confirmed.
 
-The red LED is configured on GPIO 25. The firmware comments indicate its state is updated from a backend response field named `red_led`. Use an appropriate current-limiting resistor and confirm LED polarity.
+## MPU-6500 experiment
 
-## Electrical safety and compatibility
+An MPU-6500 was considered during an earlier Truck Node development stage. It was removed from the final integrated Truck Node firmware. The experiment sketch is retained in `firmware/Development/Truck_Node/` for historical context and is not part of the final hardware architecture.
 
-- ESP32 GPIOs operate at 3.3 V logic and are not 5 V tolerant.
-- Do not connect a 5 V logic output directly to an ESP32 GPIO.
-- Check the pull-up voltage on I²C LCD backpacks; use level shifting where necessary.
-- Confirm sensor supply voltage, logic levels, current requirements, and common-ground requirements from the exact module datasheets.
-- Do not infer a module's safe voltage solely from the sensor IC name; breakout boards may include regulators or level shifters, or may omit them.
+## Voltage note
+
+The prototype used a mixture of 3.3 V and 5 V module supplies; the LCD is an example of a 5 V module. The exact supply voltage for every sensor breakout and the I²C pull-up voltage are not recorded. ESP32 GPIOs are 3.3 V logic and are not 5 V tolerant. Do not recreate wiring without checking the exact module datasheets and logic-level compatibility.

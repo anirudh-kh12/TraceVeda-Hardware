@@ -1,76 +1,77 @@
-# Hardware System Architecture
+# System Architecture
 
 ## Purpose
 
-The TraceVeda hardware layer gathers physical-condition and handling telemetry from two points in the herbal supply chain: a stationary storage environment and a moving transport vehicle.
+The TraceVeda hardware layer collects environmental and handling telemetry at two stages: stationary storage and transportation.
 
-## System-level view
+## System overview
 
 ```mermaid
 flowchart TB
-    subgraph S["Storage Node — ESP32"]
-      S1["DHT22\nTemperature + humidity"]
-      S2["BH1750\nIlluminance"]
-      S3["Limit switch\nDoor state"]
-      S4["20×4 I²C LCD"]
-      S5["Red LED"]
-      SC["ESP32 firmware"]
-      S1 --> SC
-      S2 --> SC
-      S3 --> SC
-      SC --> S4
-      SC --> S5
-    end
+  subgraph S["Storage Node — ESP32"]
+    S1["DHT22: temperature + humidity"]
+    S2["BH1750: illuminance"]
+    S3["Limit switch: door state"]
+    S4["20×4 I²C LCD"]
+    S5["Red LED"]
+    SC["Storage Node firmware"]
+    S1 --> SC
+    S2 --> SC
+    S3 --> SC
+    SC --> S4
+    SC --> S5
+  end
 
-    subgraph T["Truck Node — ESP32"]
-      T1["DHT22\nTemperature + humidity"]
-      T2["BH1750\nIlluminance"]
-      T3["Limit switch\nDoor state"]
-      T4["GPS receiver\nPosition"]
-      T5["Load cell + HX711\nWeight"]
-      T6["16×2 I²C LCD"]
-      T7["Red LED"]
-      TC["ESP32 firmware"]
-      T1 --> TC
-      T2 --> TC
-      T3 --> TC
-      T4 --> TC
-      T5 --> TC
-      TC --> T6
-      TC --> T7
-    end
+  subgraph T["Truck Node — ESP32"]
+    T1["DHT22: temperature + humidity"]
+    T2["BH1750: illuminance"]
+    T3["Limit switch: door state"]
+    T4["NEO-6M GPS"]
+    T5["20 kg load cell + HX711"]
+    T6["16×2 I²C LCD"]
+    T7["Red LED"]
+    TC["Truck Node firmware"]
+    T1 --> TC
+    T2 --> TC
+    T3 --> TC
+    T4 --> TC
+    T5 --> TC
+    TC --> T6
+    TC --> T7
+  end
 
-    SC -->|"Wi-Fi / HTTP(S) API\nPOST /api/iot/readings"| API["TraceVeda backend"]
-    TC -->|"Wi-Fi / HTTP(S) API\nPOST /api/iot/readings"| API
-    API --> DB["Backend data store"]
-    API -.->|"red_led state in response"| SC
-    API -.->|"red_led state in response"| TC
+  SC -->|"Wi-Fi telemetry"| API["TraceVeda backend"]
+  TC -->|"Wi-Fi telemetry"| API
+  API -->|"response including red_led state"| SC
+  API -->|"response including red_led state"| TC
 ```
 
-The firmware comments describe HTTPS/API telemetry and device-key authentication. The actual base URL and credentials are intentionally omitted from this portfolio copy.
+## Storage Node
 
-## Node responsibilities
+The Storage Node monitors:
+- Temperature and relative humidity using DHT22.
+- Ambient illuminance using BH1750.
+- Door state using a limit switch.
 
-### Storage Node
+It displays information on a 20×4 I²C LCD and controls a red LED using the backend response.
 
-- Reads temperature and relative humidity from DHT22.
-- Reads illuminance from BH1750 over I²C.
-- Reads a digital limit switch as the storage-door state.
-- Displays status/readings on a 20×4 I²C LCD.
-- Drives a red LED using the state received from the backend.
-- Queues telemetry and uses LittleFS for offline backlog handling.
+## Truck Node
 
-### Truck Node
+The Truck Node monitors:
+- Temperature and relative humidity using DHT22.
+- Ambient illuminance using BH1750.
+- Compartment-door state using a limit switch.
+- GPS position using a NEO-6M receiver.
+- Payload weight using a 20 kg load cell and HX711 amplifier.
 
-- Reads temperature and relative humidity from DHT22.
-- Reads illuminance from BH1750 over I²C.
-- Reads a compartment-door limit switch.
-- Receives GPS data over UART2 and parses NMEA data using TinyGPSPlus.
-- Reads a load cell through an HX711 amplifier.
-- Displays rotating status/readout screens on a 16×2 I²C LCD.
-- Queues telemetry and uses LittleFS for offline backlog handling.
-- Drives a red LED using backend response state.
+It displays information on a 16×2 I²C LCD and controls a red LED using the backend response.
 
-## Boundary of the hardware contribution
+## Backend integration
 
-The ESP32 nodes acquire, package, queue, and transmit device readings. Backend persistence, threshold policy, batch workflows, dashboards, and the rest of the supply-chain platform belong to the wider TraceVeda software system.
+Both nodes were integrated with the backend. Their final firmware sends telemetry to:
+
+`POST /api/iot/readings`
+
+The firmware also receives and processes backend responses. The red LED output is controlled using the `red_led` field described in the source comments and response-handling code.
+
+The API base URL and device key are configuration values and are not documented here as live credentials.

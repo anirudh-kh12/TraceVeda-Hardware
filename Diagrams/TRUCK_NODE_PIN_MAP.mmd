@@ -1,16 +1,18 @@
 flowchart LR
-  ESP["ESP32"]
+  ESP["ESP32 development board"]
   DHT["DHT22 DATA"] ---|"GPIO 4"| ESP
-  SWITCH["Limit switch signal"] ---|"GPIO 27\nINPUT_PULLUP"| ESP
-  LED["Red LED + resistor"] ---|"GPIO 25"| ESP
-  GPS["GPS TX → ESP RX"] ---|"GPIO 16 / UART2 RX"| ESP
-  ESP ---|"GPIO 17 / UART2 TX → GPS RX"| GPS
-  HX["HX711 DT"] ---|"GPIO 32"| ESP
-  HS["HX711 SCK"] ---|"GPIO 33"| ESP
-  subgraph I2C["Shared I²C bus"]
+  SW["Limit switch signal"] ---|"GPIO 27\nINPUT_PULLUP"| ESP
+  LED["Red LED control"] ---|"GPIO 25"| ESP
+  GPS["NEO-6M GPS"] ---|"GPS TX → GPIO 16\nUART2 RX"| ESP
+  ESP ---|"GPIO 17\nUART2 TX → GPS RX"| GPS
+  HXDT["HX711 DT"] ---|"GPIO 32"| ESP
+  HXSCK["HX711 SCK"] ---|"GPIO 33"| ESP
+
+  subgraph BUS["I²C bus"]
     SDA["SDA"] ---|"GPIO 21"| ESP
     SCL["SCL"] ---|"GPIO 22"| ESP
-    LCD["16×2 LCD\naddress 0x27"] --- SDA
+    LCD["16×2 LCD\n0x27"] --- SDA
     BH["BH1750"] --- SDA
   end
-  NOTE["Power, ground, pull-ups, load-cell bridge wiring and level shifting are not represented.\nVerify exact modules before wiring."]
+
+  NOTE["Signal map from final firmware.\nPower, ground, pull-ups, LED resistor and load-cell bridge wiring are not shown."]

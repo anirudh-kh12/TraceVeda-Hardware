@@ -1,26 +1,27 @@
 flowchart TB
   subgraph S["Storage Node — ESP32"]
-    S1["DHT22"]
-    S2["BH1750"]
-    S3["Door limit switch"]
+    S1["DHT22\nTemperature + humidity"]
+    S2["BH1750\nIlluminance"]
+    S3["Limit switch\nDoor state"]
     S4["20×4 I²C LCD"]
     S5["Red LED"]
-    SC["Storage firmware"]
+    SC["Storage Node firmware"]
     S1 --> SC
     S2 --> SC
     S3 --> SC
     SC --> S4
     SC --> S5
   end
+
   subgraph T["Truck Node — ESP32"]
-    T1["DHT22"]
-    T2["BH1750"]
-    T3["Door limit switch"]
-    T4["GPS / UART2"]
-    T5["Load cell + HX711"]
+    T1["DHT22\nTemperature + humidity"]
+    T2["BH1750\nIlluminance"]
+    T3["Limit switch\nDoor state"]
+    T4["NEO-6M GPS"]
+    T5["20 kg load cell + HX711"]
     T6["16×2 I²C LCD"]
     T7["Red LED"]
-    TC["Truck firmware"]
+    TC["Truck Node firmware"]
     T1 --> TC
     T2 --> TC
     T3 --> TC
@@ -29,5 +30,8 @@ flowchart TB
     TC --> T6
     TC --> T7
   end
-  SC -->|"Wi-Fi telemetry"| API["TraceVeda IoT API"]
+
+  SC -->|"Wi-Fi telemetry"| API["TraceVeda backend"]
   TC -->|"Wi-Fi telemetry"| API
+  API -->|"Backend response"| SC
+  API -->|"Backend response"| TC

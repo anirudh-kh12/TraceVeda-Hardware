@@ -2,40 +2,46 @@
 
 ## Overview
 
-The Storage Node is the stationary ESP32-based monitoring unit intended for the storage environment. Its final backend-integrated sketch is located at:
+The Storage Node is the stationary monitoring unit built around an ESP32 development board.
 
-`firmware/Final_Integration/Storage_Node/Storage_Node_Backend.ino`
+### Final hardware
 
-The supplied final sketch configures DHT22, BH1750, a door limit switch, a 20×4 I²C LCD, and a red LED.
+- ESP32 development board
+- DHT22
+- BH1750
+- Limit switch
+- 20×4 I²C LCD
+- Red LED
 
-## Firmware-derived pin map
+### Final firmware
 
-| Device / signal | ESP32 pin or bus | Notes |
-|---|---|---|
-| DHT22 data | GPIO 4 | `DHT_PIN` |
-| BH1750 SDA | GPIO 21 | Shared I²C bus |
-| BH1750 SCL | GPIO 22 | Shared I²C bus |
-| LCD SDA | GPIO 21 | Shared I²C bus |
-| LCD SCL | GPIO 22 | Shared I²C bus |
-| Limit switch | GPIO 27 | Configured `INPUT_PULLUP` |
-| Red LED | GPIO 25 | Digital output |
-| LCD address | `0x27` | Verify actual backpack address |
-| LCD geometry | 20×4 | From final Storage Node sketch |
+`firmware/Storage_Node/Storage_Node.ino`
 
-## Functional sequence
+## Firmware-derived pin mapping
 
-1. Initialize serial diagnostics.
-2. Initialize I²C and the LCD.
-3. Initialize DHT22 and BH1750.
-4. Configure the limit switch input and red LED output.
-5. Initialize the flash filesystem and network-related services.
-6. Read sensors on their scheduled intervals.
-7. Build sensor-specific telemetry payloads.
-8. Queue readings in RAM and persist backlog to LittleFS when upload is unavailable.
-9. Upload queued readings to the TraceVeda API when connectivity is available.
-10. Apply the backend-returned `red_led` state to GPIO 25.
-11. Refresh the LCD with current readings and status.
+| Peripheral signal | ESP32 connection |
+|---|---|
+| DHT22 data | GPIO 4 |
+| BH1750 SDA | GPIO 21 |
+| BH1750 SCL | GPIO 22 |
+| LCD SDA | GPIO 21 |
+| LCD SCL | GPIO 22 |
+| Limit switch signal | GPIO 27 |
+| Red LED control | GPIO 25 |
 
-## Wiring reference
+Other firmware configuration:
+- LCD address: `0x27`
+- LCD geometry: 20 columns × 4 rows
+- Limit-switch pin mode: `INPUT_PULLUP`
 
-See [`../diagrams/STORAGE_NODE_PIN_MAP.mmd`](../diagrams/STORAGE_NODE_PIN_MAP.mmd). It is a firmware-derived signal map, not a substitute for a verified electrical schematic. Power, ground, pull-up, resistor, and connector details must be filled in from the actual assembled circuit.
+These are the final firmware pin assignments used in the prototype. The prototype has since been dismantled, so this table is not a new physical wiring verification.
+
+## Functional operation
+
+The firmware initializes the display, sensors, GPIO, Wi-Fi and filesystem. It periodically reads the environmental sensors and door input, updates the LCD, constructs telemetry payloads and sends readings to the TraceVeda backend.
+
+The code includes RAM queueing and LittleFS-backed handling for readings that cannot be sent immediately. The firmware also reads the backend response and updates the red LED using the returned `red_led` state.
+
+## Diagram
+
+See [Storage Node pin map](../diagrams/STORAGE_NODE_PIN_MAP.mmd). It represents signal connections derived from the final firmware and does not include unverified power, ground, pull-up or resistor details.

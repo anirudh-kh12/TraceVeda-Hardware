@@ -39,7 +39,7 @@ The final Truck Node firmware uses:
 - 16×2 I²C LCD
 - Red LED
 
-The final sketch includes sensor acquisition, GPS parsing, weight measurement, backend telemetry transmission and backend response handling.
+The final sketch includes sensor acquisition, GPS parsing, the integrated load-cell/HX711 reading path, backend telemetry transmission and backend response handling. The load-cell calibration/zeroing issue remained unresolved, so accurate weight measurement was not established.
 
 ## Final integration
 

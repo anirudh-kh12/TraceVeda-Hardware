@@ -32,7 +32,7 @@ The Storage Node uses a 20×4 I²C LCD. The Truck Node uses a 16×2 I²C LCD. Th
 
 ## Limit switch
 
-The limit switch provides a digital input representing door/compartment state. Both final sketches configure GPIO 27 with `INPUT_PULLUP`. The exact NO/NC terminal selection is not currently known.
+The limit switch provides a digital input representing door/compartment state. The prototype used the **COM and NC terminals**, and both final sketches configure GPIO 27 with `INPUT_PULLUP`. The firmware interprets a HIGH reading as `doorClosed = true`. Because the physical prototype is dismantled and the exact signal-to-terminal wiring arrangement was not retained, the electrical polarity should not be inferred from the contact names alone. Preserve COM–NC in the documentation, but verify the resulting GPIO level and door-state interpretation if rebuilding.
 
 ## NEO-6M GPS
 
@@ -40,7 +40,7 @@ The Truck Node uses a NEO-6M GPS receiver. GPS serial communication is configure
 
 ## Load cell and HX711
 
-The Truck Node uses a 20 kg load cell with an HX711 amplifier. The final firmware connects HX711 DT to GPIO 32 and SCK to GPIO 33. The calibration constant in the final firmware is `126.4576`; its final accuracy has not been independently confirmed.
+The Truck Node uses a 20 kg load cell with an HX711 amplifier. The final firmware connects HX711 DT to GPIO 32 and SCK to GPIO 33. The final firmware contains a calibration constant of `126.4576`, but the calibration/zeroing issue remained unresolved in the prototype. Do not describe the weight readings as accurate or validated.
 
 ## MPU-6500 experiment
 

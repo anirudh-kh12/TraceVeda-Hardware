@@ -30,6 +30,10 @@ The supplied archive does not contain a complete structured test-results report 
 
 The final physical prototype is no longer available for inspection because it was dismantled and the borrowed IoT-lab components were returned.
 
+## Known load-cell limitation
+
+The Truck Node's 20 kg load-cell/HX711 path was integrated, but the calibration/zeroing issue remained unresolved. The repository records the calibration constant found in the firmware, but does not claim accurate or validated weight readings.
+
 ## Recommended format for any future test evidence
 
 | Field | Record |

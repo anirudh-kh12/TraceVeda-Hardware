@@ -26,15 +26,18 @@ The Storage Node is the stationary monitoring unit built around an ESP32 develop
 | BH1750 SCL | GPIO 22 |
 | LCD SDA | GPIO 21 |
 | LCD SCL | GPIO 22 |
-| Limit switch signal | GPIO 27 |
+| Limit switch signal | GPIO 27 (COM and NC contacts used) |
 | Red LED control | GPIO 25 |
 
 Other firmware configuration:
+- Limit switch contacts used: COM and NC
 - LCD address: `0x27`
 - LCD geometry: 20 columns × 4 rows
 - Limit-switch pin mode: `INPUT_PULLUP`
 
 These are the final firmware pin assignments used in the prototype. The prototype has since been dismantled, so this table is not a new physical wiring verification.
+
+The limit switch used COM and NC contacts. The firmware interprets a HIGH reading on GPIO 27 as `doorClosed = true`. The exact terminal-to-wire arrangement is not retained, so verify this logic level if rebuilding.
 
 ## Functional operation
 

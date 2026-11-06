@@ -12,7 +12,7 @@ This repository presents the hardware and embedded-firmware work contributed to 
 TraceVeda uses two ESP32-based nodes:
 
 - **Storage Node:** monitors temperature, relative humidity, illuminance and storage-door state.
-- **Truck Node:** monitors temperature, relative humidity, illuminance, compartment-door state, payload weight and GPS position.
+- **Truck Node:** monitors temperature, relative humidity, illuminance, compartment-door state and GPS position, and includes an integrated load-cell/HX711 weight-reading path. The load-cell calibration/zeroing issue remained unresolved, so accurate weight measurement was not established.
 
 Both nodes were integrated with the TraceVeda backend. The firmware sends telemetry to the backend and processes the backend response, including the `red_led` control value.
 
@@ -23,7 +23,7 @@ Both nodes were integrated with the TraceVeda backend. The firmware sends teleme
 | Storage Node | ESP32 development board, DHT22, BH1750, limit switch, 20×4 I²C LCD, red LED |
 | Truck Node | ESP32 development board, DHT22, BH1750, limit switch, NEO-6M GPS, 20 kg load cell with HX711, 16×2 I²C LCD, red LED |
 
-The ESP32 development boards were powered through USB during the prototype work. The connected modules used a mixture of 3.3 V and 5 V supplies (for example, the LCD used 5 V). Exact per-module supply and logic-level wiring is not fully recorded; see [Wiring and power](docs/WIRING_AND_POWER.md).
+The ESP32 development boards were powered through USB during the prototype work. The connected modules used a mixture of 3.3 V and 5 V supplies (for example, the LCD used 5 V). The limit switches used COM and NC contacts. Exact per-module supply and logic-level wiring is not fully recorded; see [Wiring and power](docs/WIRING_AND_POWER.md).
 
 ## Repository structure
 

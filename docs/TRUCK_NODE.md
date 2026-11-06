@@ -30,12 +30,13 @@ The Truck Node is the transport monitoring unit built around an ESP32 developmen
 | LCD SCL | GPIO 22 |
 | GPS TX → ESP32 RX | GPIO 16 (UART2 RX) |
 | ESP32 TX → GPS RX | GPIO 17 (UART2 TX) |
-| Limit switch signal | GPIO 27 |
+| Limit switch signal | GPIO 27 (COM and NC contacts used) |
 | HX711 DT | GPIO 32 |
 | HX711 SCK | GPIO 33 |
 | Red LED control | GPIO 25 |
 
 Other firmware configuration:
+- Limit switch contacts used: COM and NC
 - LCD address: `0x27`
 - LCD geometry: 16 columns × 2 rows
 - Limit-switch pin mode: `INPUT_PULLUP`
@@ -43,15 +44,23 @@ Other firmware configuration:
 
 These are the final firmware pin assignments used in the prototype. The prototype has since been dismantled, so this table is not a new physical wiring verification.
 
+The limit switch used COM and NC contacts. The firmware interprets a HIGH reading on GPIO 27 as `doorClosed = true`. The exact terminal-to-wire arrangement is not retained, so verify this logic level if rebuilding.
+
 ## Functional operation
 
 The firmware reads temperature, humidity, illuminance, door state, load-cell weight and GPS information. It updates the LCD, prepares telemetry payloads, sends readings to the backend and processes backend responses.
 
 The final integrated firmware includes the DHT22, BH1750, limit switch, HX711/load cell and GPS sensor identities. The MPU-6500 was removed from the final integrated version.
 
-## Load-cell calibration note
+## Load-cell calibration limitation
 
-The 20 kg value is the load-cell capacity reported by the user. The final firmware contains a calibration constant of `126.4576`. Earlier development code describes calibrating with a 177 g phone, but the final accuracy and zero stability of the assembled prototype have not been confirmed. Do not present the constant as a verified calibration result.
+The load cell used was rated at 20 kg. The final firmware contains a calibration constant of `126.4576`, and an earlier development sketch describes deriving a factor using a 177 g phone.
+
+The calibration/zeroing issue remained unresolved in the final prototype. Therefore:
+- The constant is a recorded firmware value, not a verified calibration.
+- Weight acquisition was integrated, but accurate weight measurement was not established.
+- Do not claim validated weight accuracy, repeatability, or correct zeroing.
+- If the system is rebuilt, mechanically mount the load cell correctly, tare with no load, calibrate with known masses across the intended range, and record the observed error before using the weight data operationally.
 
 ## GPS note
 

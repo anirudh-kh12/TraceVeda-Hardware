@@ -13,7 +13,7 @@ Accordingly, these diagrams are **firmware-derived connection records**, not fre
 | GPIO 4 | Digital data | DHT22 |
 | GPIO 21 | SDA | BH1750 and 20×4 LCD |
 | GPIO 22 | SCL | BH1750 and 20×4 LCD |
-| GPIO 27 | Digital input | Limit switch |
+| GPIO 27 | Digital input | Limit switch (COM and NC contacts used) |
 | GPIO 25 | Digital output | Red LED |
 
 ## Truck Node
@@ -25,7 +25,7 @@ Accordingly, these diagrams are **firmware-derived connection records**, not fre
 | GPIO 22 | SCL | BH1750 and 16×2 LCD |
 | GPIO 16 | UART2 RX | GPS TX → ESP32 RX |
 | GPIO 17 | UART2 TX | ESP32 TX → GPS RX |
-| GPIO 27 | Digital input | Limit switch |
+| GPIO 27 | Digital input | Limit switch (COM and NC contacts used) |
 | GPIO 32 | Digital input | HX711 DT |
 | GPIO 33 | Clock output | HX711 SCK |
 | GPIO 25 | Digital output | Red LED |
@@ -47,6 +47,7 @@ The LCD address declared in both final sketches is `0x27`.
 - Verify GPS UART voltage compatibility before connecting TX/RX.
 - Use a current-limiting resistor for the red LED.
 - Confirm load-cell bridge wiring from the exact load-cell/HX711 documentation; wire colours are not universal.
+- The limit switch used COM and NC. The final firmware maps a HIGH GPIO 27 reading to `doorClosed = true`; verify that the rebuilt circuit produces this logic level for the actual closed-door position.
 - Confirm common-ground and power-current requirements for the complete node.
 
 ## Not currently known
@@ -54,7 +55,7 @@ The LCD address declared in both final sketches is `0x27`.
 - Exact ESP32 board revision.
 - Exact 3.3 V/5 V rail allocation for each individual sensor module.
 - LCD backpack pull-up voltage and level-shifter arrangement.
-- Limit switch NO/NC contact selection.
+- Limit switch contact selection is known (COM and NC), but the exact physical terminal-to-wire arrangement is not retained.
 - Exact LED resistor value.
 - Load-cell wire-colour mapping and HX711 excitation arrangement.
 
